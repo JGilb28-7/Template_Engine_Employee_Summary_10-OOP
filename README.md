@@ -22,7 +22,7 @@ I created the output file by combining the templates into one file.
  switch function 
  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/switch
  BootCampSpot re-watched the weekly courses. 
- as reference above referenced code from hoffman1200
+ as reference above referenced code from hoffman1200 only on the app.js file
  README File
  Course Development folder
 

@@ -11,166 +11,138 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 const render = require("./lib/htmlRenderer");
 
 const devTeamMembers = [];
+const emptyId = [];
 // Write code to use 1.inquirer to gather information about the _development _team _members,
 // and to 2.create objects for each team member (using the correct classes as blueprints!)
     // need to create  function () for the questions using inq and prompt the questions - JSG
-    // need to create the a way to select the employee type using list...
-
-function dataManager() {
-    inquirer
-        .prompt([{
-            name: 'name',
-            type: 'input',
-            message: 'Enter Managers Name',
+    /
+    const questionsEmployee = [
+        {
+            type: "input",
+            name: "nameManager",
+            message: "enter the name of manager?"
         },
         {
-            name:'email',
-            type:'input',
-            message:'Enter the Managers Email Address',
+            type: "input",
+            name: "managerId",
+            message: "Enter the Managers ID"
         },
         {
-            name:'id',
-            type:'input',
-            message:'Enter the ID Number for Manager'
+            type: "input",
+            name: "emailManager",
+            message: "Enter the manager's email?"
         },
         {
-            name:'number',
-            type:'input',
-            message:'Enter the Managers Phone Number'
-        },
-    ])
-        //jsg - need to create the response simular to last homework but using the .then in act 24 mini project
-        //Resource: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then
-        //jsg - this allows the response to be pushed to the devTeamMembers array
-        .then(function(response){
-            console.log(response);
-            const newManager = new Manager(
-                response.name,
-                response.email,
-                repsonse.id,
-                response.number,
-            );
-            devTeamMembers.push(newManager);
-                dataTeam();
-            });
-        }
-    dataManager();
-
-        //jsg -tested here to make sure the prompt works via node app.js in terminal - complete
-    function dataTeam() {
-        inquirer
-            .prompt([
-            {
-            name: 'team',
-            type: 'list',
-            message: 'add a team member?',
-            //use choices for list
-            choices: [
-                'select a Manager',
-                'select an Engineer',
-                'select an Intern',
-                'finished'
-            ],
-        },
-    ])
-        //use a .then again and use a switch function 
-        //Resources: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/switch
-
-        .then(function (data) {
-            switch (data.team) {
-                case 'select a Manager':
-                dataManager();
-                break;
-                case 'select an Engineer':
-                dataEngineer();
-                break;
-                case 'select an Intern':
-                    dataIntern();
-                    break;
-                case 'team is finished':
-                    dataTeam();
-                    break;
-            }
+            type: "input",
+            name: "officeNumber",
+            message: "Ente the manager's office phone number number?"
             
+        }
+    ];
+    
+    //jsg - need to create the response simular to last homework but using the .then in act 24 mini project
+    //Resource: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then
+    //jsg - this allows the response to be pushed to the devTeamMembers array
+    function managerData() {
+        console.log("Build your team");
+        inquirer.prompt(questionsEmployee).then(function(data){
+            const manager = new Manager(data.nameManager, data.managerId, data.emailManager, data.officeNumber);
+            devTeamMembers.push(manager);
+            emptyId.push(data.managerId);
+            buildTeam();
         });
+    };
+    
+    function buildTeam() {
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "employeeRoles",
+                message: "select employee roles to add.",
+                choices: [
+                    "Engineer",
+                    "Intern",
+                    "finished adding employees"
+                ]
+            }
+            // this tell if the empRoles is equal to either Engineer or Intern then present the function()
+        ]).then(function(data){
+            if (data.employeeRoles === "Engineer"){
+                engineer();
+            } else if (data.employeeRoles === "Intern"){
+                intern();
+            } else (outputTeam());
+        });
+    };
+    
+    function engineer() {
+        inquirer.prompt([
+            {
+                type: "input",
+                name:"engineerName",
+                message: "Enter engineer's name?"
+            },
+            {
+                type: "input",
+                name:"engineerId",
+                message: "Enter engineer's ID?"
+            },
+            {
+                type: "input",
+                name: "engineerEmail",
+                message: "Enter engineer's email?"
+            },
+            {
+                type: "input",
+                name: "engineerGithub",
+                message: "Enter engineer's GitHub username?"
+            }
+        ]). then(function(data){
+            const engineer = new Engineer(data.engineerName, data.engineerId, data.engineerEmail, data.engineerGithub);
+            devTeamMembers.push(engineer);
+            emptyId.push(data.engineerId);
+            buildTeam();
+        });
+    };
+    
+    function intern() {
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "internName",
+                message: "What is the intern's name?"
+            },
+            {
+                type: "input",
+                name: "internId",
+                message: "What is the intern's ID?"
+            },
+            {
+                type: "input",
+                name: "internEmail",
+                message: "What is the intern's email?"
+            },
+            {
+                type: "input",
+                name: "internSchool",
+                message: "What is the intern's school?"
+            }
+        ]). then(function(data){
+            const intern = new Intern(data.internName, data.internId, data.internEmail, data.internSchool);
+            devTeamMembers.push(intern);
+            emptyId.push(data.internId);
+            buildTeam();
+        });
+    };
+    
+    function outputTeam() {
+        if (!fs.existsSync(OUTPUT_DIR)) {
+            fs.mkdirSync(OUTPUT_DIR)
+        }
+        fs.writeFileSync(outputPath, render(devTeamMembers), "utf-8");
     }
-  
-        //jsg - repeat above for the team members with the changes for unique input
-    function dataEngineer() {
-        inquirer
-            .prompt([{
-                name: 'name',
-                type: 'input',
-                message: 'Enter Engineer Name',
-            },
-            {
-                name:'email',
-                type:'input',
-                message:'Enter Engineer Email Address',
-            },
-            {
-                name:'id',
-                type:'input',
-                message:'Enter the ID Number for Manager'
-            },
-            {
-                name:'github',
-                type:'input',
-                message:'Enter the Engineers Githib ID'
-            },
-        ])
-            .then(function(response){
-                console.log(response);
-                const newEngineer = new Engineer(
-                    response.name,
-                    response.email,
-                    repsonse.id,
-                    response.github,
-                );
-                devTeamMembers.push(newEngineer);
-                buildTeam();
-                });
-            }
-    function dataIntern() {
-        inquirer
-            .prompt([{
-                name: 'name',
-                type: 'input',
-                message: 'Enter Intern Name',
-            },
-            {
-                name:'email',
-                type:'input',
-                message:'Enter Intern Email Address',
-            },
-            {
-                name:'id',
-                type:'input',
-                message:'Enter the ID Number for Intern'
-            },
-            {
-                name:'school',
-                type:'input',
-                message:'Enter the Intern school name'
-            },
-        ])
-            .then(function(response){
-                console.log(response);
-                const newIntern = new Intern(
-                    response.name,
-                    response.email,
-                    repsonse.id,
-                    response.github,
-                );
-                devTeamMembers.push(newIntern);
-                buildTeam();
-                });
-            }
-        
-    function dataTeam(){
-   fs.writeFileSync(outputPath, render(devTeamMembers), "utf8");
-   }
- 
+    
+    managerData();
 
 // After the user has input all employees desired, call the 3.`render` function (required
 // above) and 4. pass in an array containing all employee objects; the `render` function will

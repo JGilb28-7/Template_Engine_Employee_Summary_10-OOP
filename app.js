@@ -15,7 +15,7 @@ const emptyId = [];
 // Write code to use 1.inquirer to gather information about the _development _team _members,
 // and to 2.create objects for each team member (using the correct classes as blueprints!)
     // need to create  function () for the questions using inq and prompt the questions - JSG
-    /
+    
     const questionsEmployee = [
         {
             type: "input",
